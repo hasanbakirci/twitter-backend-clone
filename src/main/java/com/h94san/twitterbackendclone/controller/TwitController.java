@@ -35,6 +35,10 @@ public class TwitController {
     public ResponseEntity<List<ShowTwitRequestDto>> findByUsernameTwit(@RequestParam String username){
         return ResponseEntity.ok(this.twitService.findByUsernameTwit(username));
     }
+    @GetMapping("/findByTimelineTwit")
+    public ResponseEntity<List<ShowTwitRequestDto>> findByTimelineTwit(@RequestParam String username){
+        return ResponseEntity.ok(this.twitService.findByTimelineTwit(username));
+    }
 
 
 }
