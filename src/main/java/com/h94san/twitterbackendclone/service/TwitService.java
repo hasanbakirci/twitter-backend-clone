@@ -26,7 +26,6 @@ public class TwitService {
 
     public Twit createTwit(CreateTwitRequest createTwitRequest){
         User user = userService.findUserById(createTwitRequest.getUserId());
-        System.out.println(user.getId()+" "+user.getUsername()+" "+user.getEmail());
         Twit myTwit = new Twit(
                 createTwitRequest.getContext(),
                 createTwitRequest.getStar(),

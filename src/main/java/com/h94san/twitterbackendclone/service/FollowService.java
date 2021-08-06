@@ -36,21 +36,21 @@ public class FollowService {
         return followRepository.findByFollowerUserId(followerUserId);
     }
     public List<ShowUserFollowingDto> findByUserFollowing(String username){
-        User user = userService.getByUsername(username);
-        List<Follow> followers = followRepository.findAll().stream().filter(u -> u.getFollowerUserId() == user.getId()).collect(Collectors.toList());
+        var user = userService.getByUsername(username);
+        List<Follow> followers = followRepository.findAll().stream().filter(u -> u.getFollowerUserId() == user.getData().getId()).collect(Collectors.toList());
         List<ShowUserFollowingDto> showUserFollowingDtos = followers.stream().map(item ->
-                new ShowUserFollowingDto(user.getId(),
-                        user.getUsername(),
+                new ShowUserFollowingDto(user.getData().getId(),
+                        user.getData().getUsername(),
                         userService.findUserById(item.getFollowingUserId()).getUsername(),
                         item.getFollowerDate())).collect(Collectors.toList());
         return showUserFollowingDtos;
     }
     public List<ShowUserFollowerDto> findByUserFollower(String username){
-        User user = userService.getByUsername(username);
-        List<Follow> followers = followRepository.findAll().stream().filter(u -> u.getFollowingUserId() == user.getId()).collect(Collectors.toList());
+        var user = userService.getByUsername(username);
+        List<Follow> followers = followRepository.findAll().stream().filter(u -> u.getFollowingUserId() == user.getData().getId()).collect(Collectors.toList());
         List<ShowUserFollowerDto> showUserFollowerDtos = followers.stream().map(item ->
                 new ShowUserFollowerDto(item.getId(),
-                        user.getUsername(),
+                        user.getData().getUsername(),
                         userService.findUserById(item.getFollowerUserId()).getUsername(),
                         item.getFollowerDate())).collect(Collectors.toList());
         return showUserFollowerDtos;

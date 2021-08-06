@@ -1,5 +1,10 @@
 package com.h94san.twitterbackendclone.service;
 
+import com.h94san.twitterbackendclone.core.utilities.exception.CustomBadRequestException;
+import com.h94san.twitterbackendclone.core.utilities.exception.CustomNotFoundException;
+import com.h94san.twitterbackendclone.core.utilities.results.DataResult;
+import com.h94san.twitterbackendclone.core.utilities.results.ErrorDataResult;
+import com.h94san.twitterbackendclone.core.utilities.results.SuccessDataResult;
 import com.h94san.twitterbackendclone.model.Follow;
 import com.h94san.twitterbackendclone.model.User;
 import com.h94san.twitterbackendclone.model.dto.CreateUserRequest;
@@ -17,22 +22,25 @@ public class UserService {
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
     protected User findUserById(int id){
-        return userRepository.findById(id).orElseThrow();
+        return userRepository.findById(id)
+                .orElseThrow(()-> new CustomNotFoundException("Kayıt bulunamadı"));
     }
 
-    public User createUser(CreateUserRequest createUserRequest){
-        User user = new User(createUserRequest.getId(),createUserRequest.getUsername(),createUserRequest.getEmail());
-        return userRepository.save(user);
+    public DataResult<User> createUser(CreateUserRequest createUserRequest){
+        if(getByUsername(createUserRequest.getUsername()).isSuccess())
+            throw new CustomBadRequestException("Bu kullanıcı adı kullanılmakta");
+        User newUser = new User(createUserRequest.getId(), createUserRequest.getUsername(), createUserRequest.getEmail());
+        return new SuccessDataResult(userRepository.save(newUser), "Kullanıcı eklendi");
     }
-    public List<User> findAll(){
-        return userRepository.findAll();
+
+    public DataResult<List<User>> findAll(){
+        return new SuccessDataResult(this.userRepository.findAll(),"Kullanıcılar listelendi.");
     }
 
-
-
-    public User getByUsername(String username){
-        return this.userRepository.findAll().stream().filter(u -> u.getUsername().equals(username)).collect(Collectors.toList()).get(0);
+    public DataResult<User> getByUsername(String username){
+        var user = this.userRepository.getByUsername(username)
+                .orElseThrow(()-> new CustomNotFoundException("Kayıt bulunamadı"));
+        return new SuccessDataResult(this.userRepository.getByUsername(username),"Kayıt bulundu");
     }
 }
