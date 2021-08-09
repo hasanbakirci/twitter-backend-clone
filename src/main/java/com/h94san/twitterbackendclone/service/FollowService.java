@@ -1,5 +1,7 @@
 package com.h94san.twitterbackendclone.service;
 
+import com.h94san.twitterbackendclone.core.utilities.results.DataResult;
+import com.h94san.twitterbackendclone.core.utilities.results.SuccessDataResult;
 import com.h94san.twitterbackendclone.model.Follow;
 import com.h94san.twitterbackendclone.model.User;
 import com.h94san.twitterbackendclone.model.dto.AddFollowRequest;
@@ -21,31 +23,28 @@ public class FollowService {
         this.userService = userService;
     }
 
-    public Follow followingAdd(AddFollowRequest addFollowRequest){
+    public DataResult<Follow> followingAdd(AddFollowRequest addFollowRequest){
         User followerUser = userService.findUserById(addFollowRequest.getFollowerUserId());
         User followingUser  = userService.findUserById(addFollowRequest.getFollowingUserId());
         Follow follow = new Follow(followerUser.getId(),followingUser.getId() );
-        return followRepository.save(follow);
+        return new SuccessDataResult(followRepository.save(follow),"Eklendi");
     }
 
-    public List<Follow> findAll(){
-        return followRepository.findAll();
+    public DataResult<List<Follow>> findAll(){
+        return new SuccessDataResult(followRepository.findAll(),"Takip, Takipçi listelendi");
     }
 
-    public List<Follow> findByFollowerUserId(int followerUserId){
-        return followRepository.findByFollowerUserId(followerUserId);
-    }
-    public List<ShowUserFollowingDto> findByUserFollowing(String username){
-        var user = userService.getByUsername(username);
-        List<Follow> followers = followRepository.findAll().stream().filter(u -> u.getFollowerUserId() == user.getData().getId()).collect(Collectors.toList());
+    public DataResult<List<ShowUserFollowingDto>> findByUserFollowing(String username){
+        var user = userService.getByUsername(username).getData();
+        List<Follow> followers = followRepository.findAll().stream().filter(u -> u.getFollowerUserId() == user.getId()).collect(Collectors.toList());
         List<ShowUserFollowingDto> showUserFollowingDtos = followers.stream().map(item ->
-                new ShowUserFollowingDto(user.getData().getId(),
-                        user.getData().getUsername(),
+                new ShowUserFollowingDto(user.getId(),
+                        user.getUsername(),
                         userService.findUserById(item.getFollowingUserId()).getUsername(),
                         item.getFollowerDate())).collect(Collectors.toList());
-        return showUserFollowingDtos;
+        return new SuccessDataResult(showUserFollowingDtos,"Takip edilenler listelendi");
     }
-    public List<ShowUserFollowerDto> findByUserFollower(String username){
+    public DataResult<List<ShowUserFollowerDto>> findByUserFollower(String username){
         var user = userService.getByUsername(username);
         List<Follow> followers = followRepository.findAll().stream().filter(u -> u.getFollowingUserId() == user.getData().getId()).collect(Collectors.toList());
         List<ShowUserFollowerDto> showUserFollowerDtos = followers.stream().map(item ->
@@ -53,6 +52,6 @@ public class FollowService {
                         user.getData().getUsername(),
                         userService.findUserById(item.getFollowerUserId()).getUsername(),
                         item.getFollowerDate())).collect(Collectors.toList());
-        return showUserFollowerDtos;
+        return new SuccessDataResult(showUserFollowerDtos,"Takipçiler listelendi");
     }
 }

@@ -1,5 +1,7 @@
 package com.h94san.twitterbackendclone.service;
 
+import com.h94san.twitterbackendclone.core.utilities.results.DataResult;
+import com.h94san.twitterbackendclone.core.utilities.results.SuccessDataResult;
 import com.h94san.twitterbackendclone.model.Twit;
 import com.h94san.twitterbackendclone.model.User;
 import com.h94san.twitterbackendclone.model.dto.CreateTwitRequest;
@@ -24,16 +26,16 @@ public class TwitService {
         this.followService = followService;
     }
 
-    public Twit createTwit(CreateTwitRequest createTwitRequest){
+    public DataResult<Twit> createTwit(CreateTwitRequest createTwitRequest){
         User user = userService.findUserById(createTwitRequest.getUserId());
         Twit myTwit = new Twit(
                 createTwitRequest.getContext(),
                 createTwitRequest.getStar(),
                 user);
-        return twitRepository.save(myTwit);
+        return new SuccessDataResult(twitRepository.save(myTwit),"Eklendi");
     }
 
-    public List<ShowTwitRequestDto> findAll(){
+    public DataResult<List<ShowTwitRequestDto>> findAll(){
         List<Twit> twits = twitRepository.findAll();
         List<ShowTwitRequestDto> showTwitRequestDtos = twits.stream().map(item ->
                 new ShowTwitRequestDto(item.getId(),
@@ -41,16 +43,16 @@ public class TwitService {
                         item.getCreatedDate(),
                         item.getStar(),
                         item.getUser().getUsername())).collect(Collectors.toList());
-       return showTwitRequestDtos;
+       return new SuccessDataResult<>(showTwitRequestDtos,"Tüm twitler listelendi");
    }
 
-   public List<ShowTwitRequestDto> findByUsernameTwit(String username){
-       List<ShowTwitRequestDto> showTwitRequestDtos = findAll().stream().filter(item -> item.getUsername()
+   public DataResult<List<ShowTwitRequestDto>> findByUsernameTwit(String username){
+       List<ShowTwitRequestDto> showTwitRequestDtos = findAll().getData().stream().filter(item -> item.getUsername()
                .equals(username)).collect(Collectors.toList());
-       return showTwitRequestDtos;
+       return new SuccessDataResult<>(showTwitRequestDtos,"Kullanıcı twitleri listelendi");
    }
-   public List<ShowTwitRequestDto> findByTimelineTwit(String username){
-       var followings = followService.findByUserFollowing(username);
+   public DataResult<List<ShowTwitRequestDto>> findByTimelineTwit(String username){
+       var followings = followService.findByUserFollowing(username).getData();
        var twits = twitRepository.findAll()
                .stream().filter(f-> followings.stream()
                        .anyMatch(x -> f.getUser().getUsername()
@@ -62,7 +64,7 @@ public class TwitService {
                                item.getStar(),
                                item.getUser().getUsername()
                        )).collect(Collectors.toList());
-       return  twits;
+       return  new SuccessDataResult<>(twits,"Timeline");
 
    }
 

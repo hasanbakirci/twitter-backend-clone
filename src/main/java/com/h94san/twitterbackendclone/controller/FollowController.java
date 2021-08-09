@@ -1,14 +1,10 @@
 package com.h94san.twitterbackendclone.controller;
 
-import com.h94san.twitterbackendclone.model.Follow;
 import com.h94san.twitterbackendclone.model.dto.AddFollowRequest;
-import com.h94san.twitterbackendclone.model.dto.ShowUserFollowerDto;
-import com.h94san.twitterbackendclone.model.dto.ShowUserFollowingDto;
 import com.h94san.twitterbackendclone.service.FollowService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/follow")
@@ -19,27 +15,22 @@ public class FollowController {
         this.followService = followService;
     }
     @PostMapping("/save")
-    public ResponseEntity<Follow> save(@RequestBody AddFollowRequest addFollowRequest){
+    public ResponseEntity<?> save(@RequestBody AddFollowRequest addFollowRequest){
         return ResponseEntity.ok(this.followService.followingAdd(addFollowRequest));
     }
 
     @GetMapping("/findall")
-    public ResponseEntity<List<Follow>> findAll(){
+    public ResponseEntity<?> findAll(){
         return  ResponseEntity.ok(this.followService.findAll());
     }
 
-    @GetMapping("/findByFollowerUserId")
-    public ResponseEntity<List<Follow>> findByFollowerUserId(@RequestParam int followerUserId){
-        return ResponseEntity.ok(this.followService.findByFollowerUserId(followerUserId));
-    }
-
     @GetMapping("/findByUserFollower")
-    public ResponseEntity<List<ShowUserFollowerDto>> findByUserFollower(@RequestParam String username){
+    public ResponseEntity<?> findByUserFollower(@RequestParam String username){
         return ResponseEntity.ok(followService.findByUserFollower(username));
     }
 
     @GetMapping("/findByUserFollowing")
-    public ResponseEntity<List<ShowUserFollowingDto>> findByUserFollowing(@RequestParam String username){
+    public ResponseEntity<?> findByUserFollowing(@RequestParam String username){
         return ResponseEntity.ok(followService.findByUserFollowing(username));
     }
 

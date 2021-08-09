@@ -21,22 +21,22 @@ public class TwitController {
     }
 
     @GetMapping("/findall")
-    public ResponseEntity<List<ShowTwitRequestDto>> findAll(){
+    public ResponseEntity<?> findAll(){
         return  ResponseEntity.ok(this.twitService.findAll());
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Twit> add(@Valid @RequestBody CreateTwitRequest createTwitRequest){
+    public ResponseEntity<?> add(@Valid @RequestBody CreateTwitRequest createTwitRequest){
         return ResponseEntity.ok(this.twitService.createTwit(createTwitRequest));
     }
 
     // http://localhost:8080/api/twits/findByUsernameTwit?username=hasan
     @GetMapping("/findByUsernameTwit")
-    public ResponseEntity<List<ShowTwitRequestDto>> findByUsernameTwit(@RequestParam String username){
+    public ResponseEntity<?> findByUsernameTwit(@RequestParam String username){
         return ResponseEntity.ok(this.twitService.findByUsernameTwit(username));
     }
     @GetMapping("/findByTimelineTwit")
-    public ResponseEntity<List<ShowTwitRequestDto>> findByTimelineTwit(@RequestParam String username){
+    public ResponseEntity<?> findByTimelineTwit(@RequestParam String username){
         return ResponseEntity.ok(this.twitService.findByTimelineTwit(username));
     }
 

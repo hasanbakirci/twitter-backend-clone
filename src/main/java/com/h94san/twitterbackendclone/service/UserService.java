@@ -41,6 +41,6 @@ public class UserService {
     public DataResult<User> getByUsername(String username){
         var user = this.userRepository.getByUsername(username)
                 .orElseThrow(()-> new CustomNotFoundException("Kayıt bulunamadı"));
-        return new SuccessDataResult(this.userRepository.getByUsername(username),"Kayıt bulundu");
+        return new SuccessDataResult(this.userRepository.getByUsername(username).get(),"Kayıt bulundu");
     }
 }
